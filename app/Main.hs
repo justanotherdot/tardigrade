@@ -37,7 +37,7 @@ program = do
 {- parse :: Text -> Either (ParseError (Token Text) Dec) Program -}
 parse :: Text -> Either String Program
 parse line = case MP.parse program "" line of
-               Left _    -> Left "urk"
+               Left _    -> Left "Error: Could not parse provided input."
                Right prg -> Right prg
 
 -- TODO Make me customisable.
@@ -78,7 +78,7 @@ main = do
         Just "quit" -> pure ()
         Just line ->
           case parse $ T.pack line of
-            Left e -> liftIO $ putStrLn e
+            Left e -> liftIO $ IO.hPutStrLn IO.stderr e
             Right cmd -> do
               {- liftIO $ print cmd -}
               liftIO $ runCommand IO.stdin IO.stdout IO.stderr cmd
