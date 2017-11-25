@@ -52,6 +52,12 @@ runCommand i o e (Command cmd' args') = do
       { Process.std_in    = Process.UseHandle i
       , Process.std_out   = Process.UseHandle o
       , Process.std_err   = Process.UseHandle e
+      -- TODO This is lifted from XSH and can probably be reworded without the lab context.
+      -- NOTE: this is critical, the forked process will have a reference to the
+      --       pipe and it would never otherwise be closed in the child. This means
+      --       the final process in the pipeline would hang forever waiting for the
+      --       EOF on the pipe. If you choose to re-implement your own fork-exec,
+      --       be aware of this.
       , Process.close_fds = True
       }
   Process.waitForProcess h
